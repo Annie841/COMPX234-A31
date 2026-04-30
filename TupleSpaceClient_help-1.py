@@ -71,7 +71,18 @@ def main():
             # - Send:    sock.sendall(message.encode())
             # - Receive: first read 3 bytes to get the response size (like the server does).
             #            Then read the remaining (size - 3) bytes to get the response body.
-            1
+            sock.sendall(message.encode())
+            size_bytes = sock.recv(3)
+            resp_size = int(size_bytes.decode())
+            response_buffer = sock.recv(resp_size - 3)
+
+
+            response = response_buffer.decode().strip()
+            print(f"{line}: {response}")
+
+    except (socket.error, ValueError) as e:
+        print(f"Error: {e}")
+        sys.exit(1)
     finally:
         # TASK 4: Close the socket when done (already called for you — explain why
         # finally: is the right place to do this even if an error occurs above).
